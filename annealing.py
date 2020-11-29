@@ -15,7 +15,6 @@ class Order():
 
 class Solver:
     
-
     T0 = 100 # initial temperature
     Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution
 
@@ -29,13 +28,16 @@ class Solver:
                     [20, 30, 0],
                     [30, 40 -10],
                     [40, 50, -25],
-                    [50, inf, -inf]])
+                    [50, inf, -inf]], dtype=object)
+
 
     def cost_function(self):
         cost = 0
         orders = self.get_order_list()
         for order in orders:
-            cost += self.calculate_order_cost(order)
+            time_cost = self.calculate_order_cost(order)
+            single_cost = self.calculate_penalty(time_cost)
+            cost += single_cost
         
         return cost
 
@@ -54,6 +56,13 @@ class Solver:
     def calculate_traverse_cost(self, p1, p2): # returns cost of traversing between 2 points from cost_matrix
         return self.cost_matrix[ p1[0] ][ p2[0] ]
 
+
+    def calculate_penalty(self, time):
+        for case in self.penalties_matrix:
+            if case[0] < time <= case[1]:
+
+                return case[2]
+        print('zesrało sie')
 
     def get_order_list(self) -> list:
         order_list = []
