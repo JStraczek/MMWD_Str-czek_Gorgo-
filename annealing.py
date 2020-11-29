@@ -2,6 +2,7 @@ import random
 import sys
 import numpy as np
 from enum import Enum
+import math
 
 inf = sys.maxsize
 
@@ -16,7 +17,12 @@ class Order():
 class Solver:
     
     T0 = 100 # initial temperature
+    Tmin = 1
+    k = 10
+    alpha = 0.5
+    orders = [Order.A, Order.B]
     Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution
+
 
     cost_matrix = np.array([[inf, 10, 5, 15],
                 [inf, inf, 5, 5],
@@ -26,28 +32,49 @@ class Solver:
     penalties_matrix= np.array([[0, 10, 10],
                     [10, 20, 5],
                     [20, 30, 0],
-                    [30, 40 -10],
+                    [30, 40, -10],
                     [40, 50, -25],
                     [50, inf, -inf]], dtype=object)
 
+    def simulated_annealing(self):
+        T = self.T0
+        x_star = self.Xa
+        cost_star = self.cost_function(x_star)
+        while T > self.Tmin:
+            for i in range(self.k):
+                xn = self.get_neighbor_solution(x_star)
+                delta = self.cost_function(xn) - cost_star
+                if delta <= 0:
+                    x_star = xn
+                    cost_star = self.cost_function(x_star)
+                else:
+                    r = random.random()
+                    if r < math.exp(-delta/T):
+                        x_star = xn
+                        cost_star = self.cost_function(x_star)
+                        
+            T *= alpha
+        
 
-    def cost_function(self):
+    def get_neighbor_solution(self, x_star):
+        pass
+
+    def cost_function(self, x_star):
         cost = 0
-        orders = self.get_order_list()
-        for order in orders:
-            time_cost = self.calculate_order_cost(order)
+        for order in self.orders:
+            time_cost = self.calculate_order_cost(order, x_star)
             single_cost = self.calculate_penalty(time_cost)
             cost += single_cost
         
         return cost
 
 
-    def calculate_order_cost(self, order): # returns order realisation cost based on solution Xa
+    def calculate_order_cost(self, order, Xa): # returns order realisation cost based on solution Xa
         cost = 0
-        for i in range(1, len(self.Xa)):
-            cost += self.calculate_traverse_cost(self.Xa[i-1], self.Xa[i])
+        for i in range(1, len(Xa)):
+            cost += self.calculate_traverse_cost(Xa[i-1], Xa[i])
             
-            if self.Xa[i][1] == order[1].lower():
+            if Xa[i][1] == order[1].lower():
                 break
     
         return cost
@@ -61,17 +88,16 @@ class Solver:
         for case in self.penalties_matrix:
             if case[0] < time <= case[1]:
 
-                return case[2]
-        print('zesrało sie')
+                return case[2] * (-1)
 
-    def get_order_list(self) -> list:
-        order_list = []
-        for el in self.Xa:
-            if el[1].isupper():
-                order_list.append(el)
+    # def get_order_list(self):
+    #     order_list = []
+    #     for el in self.Xa:
+    #         if el[1].isupper():
+    #             order_list.append(el)
         
-        return order_list
+    #     return order_list
 
    
 solver = Solver()
-print(solver.cost_function())
+solver.simulated_annealing()
