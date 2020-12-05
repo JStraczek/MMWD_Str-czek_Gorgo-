@@ -2,10 +2,11 @@ import random
 import sys
 import numpy as np
 from enum import Enum
+ 
 
 inf = sys.maxsize
 
-class Order():
+class Order(Enum):
     A = (0, 'A')
     a = (1, 'a')
     B = (2, 'B')
@@ -45,20 +46,20 @@ class Solver:
         for i in range(1, len(self.Xa)):
             cost += self.calculate_traverse_cost(self.Xa[i-1], self.Xa[i])
             
-            if self.Xa[i][1] == order[1].lower():
+            if self.Xa[i].value[1] == order.value[1].lower():
                 break
     
         return cost
 
     
     def calculate_traverse_cost(self, p1, p2): # returns cost of traversing between 2 points from cost_matrix
-        return self.cost_matrix[ p1[0] ][ p2[0] ]
+        return self.cost_matrix[ p1.value[0] ][ p2.value[0] ]
 
 
     def get_order_list(self) -> list:
         order_list = []
         for el in self.Xa:
-            if el[1].isupper():
+            if el.value[1].isupper():
                 order_list.append(el)
         
         return order_list
