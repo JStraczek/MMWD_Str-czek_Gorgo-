@@ -1,12 +1,11 @@
 import random
 import sys
 import numpy as np
-from enum import Enum
 import math
 
 inf = sys.maxsize
 
-class Order(Enum):
+class Order():
     A = (0, 'A')
     a = (1, 'a')
     B = (2, 'B')
@@ -53,7 +52,7 @@ class Solver:
                         x_star = xn
                         cost_star = self.cost_function(x_star)
                         
-            T *= alpha
+            T *= self.alpha
         
 
     def get_neighbor_solution(self, x_star):
@@ -81,7 +80,7 @@ class Solver:
 
     
     def calculate_traverse_cost(self, p1, p2): # returns cost of traversing between 2 points from cost_matrix
-        return self.cost_matrix[ p1.value[0] ][ p2.value[0] ]
+        return self.cost_matrix[ p1[0] ][ p2[0] ]
 
 
     def calculate_penalty(self, time):
