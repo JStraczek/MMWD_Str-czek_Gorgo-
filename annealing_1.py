@@ -20,9 +20,11 @@ class Order():
 class Solver:
     
     T0 = 100 # initial temperature
-    Tmin = 1 # minimal temperature
-    k = 10 # number of iteration per era
+    Tmin = 10 # minimal temperature
+    k = 2 # number of iteration per era
     alpha = 0.8 # cooling coefficient
+    
+    max_prohibited_solutions=300
     
     backpack_volume=3 # backpack volume
     
@@ -116,7 +118,6 @@ class Solver:
     def calculate_penalty(self, time):
         for case in self.penalties_matrix:
             if case[0] < time <= case[1]:
-                
                 return case[2] * (1)
             
     def get_order_list(self):
