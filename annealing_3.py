@@ -9,6 +9,7 @@ Created on Sun Jan 10 17:38:00 2021
 import random
 import sys
 import numpy as np
+#from enum import Enum
 import math
 
 inf = sys.maxsize
@@ -32,7 +33,8 @@ class Solver1:
     
     backpack_volume=3 # backpack volume
     
-    orders = [Order.A, Order.B] #initial solution
+    c_orders = [Order.A, Order.B] #points of collect
+    d_orders = [Order.a, Order.b] #points of deliver
     
     Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 
@@ -50,9 +52,36 @@ class Solver1:
                     [40, 50, -25],
                     [50, inf, -inf]], dtype=object) #bardziej wlasciwa nazwa to cost matrix
     
-    """def create_init_solution(orders):
-        Xa=[]
-        Xa.append"""
+    def create_init_solution(self):
+        c_order=self.c_orders
+        d_order=self.d_orders
+        start_point=random.randint(0, len(c_order)-1)
+        x_init=[c_order[start_point]]
+        backpack=[d_order[start_point]]
+        c_order.remove(c_order[start_point])
+        while len(c_order)!=0 or len(d_order)!=0:
+            if len(backpack)<self.backpack_volume:
+                if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje
+                    if len(c_order)!=0:
+                        next_point=0
+                        if len(c_order)>1:
+                            next_point=random.randint(0, len(c_order)-1)
+                        print('next',next_point)
+                        x_init.append(c_order[next_point])
+                        backpack.append(d_order[next_point])
+                        c_order.remove(c_order[next_point])
+                elif len(backpack)>0: #tutaj dodamy do sciezki klienta
+                    next_point=0
+                    if len(backpack)>1:
+                        next_point=random.randint(0, len(backpack)-1)
+                    x_init.append(backpack[next_point])
+                    backpack.remove(backpack[next_point])
+            else:#musimy dodac do sciezki klienta bo plecak jest pelny
+                next_point=random.randint(0, len(backpack)-1)
+                x_init.append(backpack[next_point])
+                backpack.remove(backpack[next_point])
+        print(x_init)
+        return x_init
     
     def check_solution(self, trace):
         total_time=self.calculate_total_time(trace)
@@ -96,17 +125,16 @@ class Solver1:
     def simulated_annealing(self):
         T = self.T0
         
-        x_init=self.Xa #TODO switch lines
-        """
-        x_init=create_init_solution(self.orders)
+        #x_init=self.Xa #TODO switch lines
+        x_init=self.create_init_solution()#self.c_orders,self.d_orders)
         limiter=0
-        while not check_solution(x_init): #uncomment after finisishing create ini solution
-            x_a=create_init_solution(self.orders)
-            if limiter==max_prohibited_solutions:
+        while not self.check_solution(x_init): #uncomment after finisishing create ini solution
+            x_init=self.create_init_solution(self.c_orders,self.d_orders)
+            if limiter==self.max_prohibited_solutions:
                 print("program nie moze osiagnac dopuszczolnego rozwiazana")
             else:
                 limiter+=1
-        """
+        
         x_star = x_init
         while T > self.Tmin:
             for it in range(self.k):
