@@ -59,16 +59,18 @@ class Solver1:
         x_init=[c_order[start_point]]
         backpack=[d_order[start_point]]
         c_order.remove(c_order[start_point])
+        d_order.remove(d_order[start_point])
         while len(x_init) != len(self.restaurants + self.customers): # dopóki są zamówienia do odebrania lub do dostarczenia wykonuj
             if len(backpack) < self.backpack_volume: #jeśli ilosc w plecaku < pojemnosci plecaka wykonaj:
                 if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje , // szansa 50% że: wykonaj:
                     if c_order:
-                        next_point=0
+                        next_point = 0
                         if len(c_order)>1:
                             next_point=random.randint(0, len(c_order)-1)
                         x_init.append(c_order[next_point])
                         backpack.append(d_order[next_point])
                         c_order.remove(c_order[next_point])
+                        d_order.remove(d_order[next_point])
                 elif backpack: #tutaj dodamy do sciezki klienta
                     next_point=0
                     if len(backpack)>1:
@@ -78,7 +80,6 @@ class Solver1:
             else:#musimy dodac do sciezki klienta bo plecak jest pelny
                 next_point=random.randint(0, len(backpack)-1)
                 x_init.append(backpack[next_point])
-                backpack.remove(backpack[next_point])
         return x_init
     
     def check_solution(self, trace):
@@ -104,9 +105,8 @@ class Solver1:
             if point[0]%2 !=0:
                 for case in self.penalties_matrix:
                     if case[0] < time <= case[1]:
-                        cost+= case[2] * (1)
+                        cost+= case[2] * (1)    
         return cost
-    
     
     def simulated_annealing(self):
         T = self.T0
@@ -146,6 +146,5 @@ class Solver1:
         return (x_star, self.cost_function(x_star))
         
             
-#Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 solver = Solver1()
 print(solver.simulated_annealing())
