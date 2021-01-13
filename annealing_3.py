@@ -9,7 +9,6 @@ Created on Sun Jan 10 17:38:00 2021
 import random
 import sys
 import numpy as np
-#from enum import Enum
 import math
 
 inf = sys.maxsize
@@ -185,8 +184,6 @@ class Solver:
                         x_star = x_n
             T *= self.alpha
         return (x_star, self.cost_function(x_star))
-        
-            
 
         
 solver = Solver()
