@@ -15,34 +15,65 @@ import math
 inf = sys.maxsize
 
 class Order():
-    A = (0, 'A')
-    a = (1, 'a')
-    B = (2, 'B')
-    b = (3, 'b')
-    C = (4, 'C')
-    c = (5, 'c')
+    A=(0,'A')
+    a=(1,'a')
+    B=(2,'B')
+    b=(3,'b')
+    C=(4,'C')
+    c=(5,'c')
+    D=(6,'D')
+    d=(7,'d')
+    E=(8,'E')
+    e=(9,'e')
+    F=(10,'F')
+    f=(11,'f')
+    G=(12,'G')
+    g=(13,'g')
+    H=(14,'H')
+    h=(15,'h')
+    I=(16,'I')
+    i=(17,'i')
+    J=(18,'J')
+    j=(19,'j')
+      
+class Solver:
     
-class Solver1:
-    
-    T0 = 30 # initial temperature
-    Tmin = 10 # minimal temperature
-    k = 2 # number of iteration per era
-    alpha = 0.5 # cooling coefficient
+    T0 = 10000 # initial temperature
+    Tmin = 1 # minimal temperature
+    k = 100 # number of iteration per era
+    alpha = 0.8 # cooling coefficient
     
     max_prohibited_solutions=300
     
     backpack_volume=3 # backpack volume
     
-    restaurants = [Order.A, Order.B] #points of collect
-    customers = [Order.a, Order.b] #points of deliver
+    restaurants = [Order.A, 	Order.B, 	Order.C, 	Order.D, Order.E] #points of collect
+    customers = [Order.a, 	Order.b, 	Order.c, 	Order.d, Order.E] #points of deliver
     
     Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 
     cost_matrix = np.array(
-               [[inf, 10, 5, 15],
-                [inf, inf, 5, 5],
-                [5, 5, inf, 10],
-                [15, 5, inf, inf]]) #bardziej wlasciwa nazwa to time matrix
+[[	inf	,	3	,	8	,	3	,	9	,	4	,	1	,	10	,	10	,	2	,	4	,	4	,	6	,	8	,	2	,	2	,	6	,	6	,	7	,	3	],
+[	inf	,	inf	,	10	,	9	,	9	,	1	,	1	,	8	,	1	,	4	,	3	,	4	,	1	,	5	,	2	,	3	,	5	,	8	,	9	,	1	],
+[	10	,	10	,	inf	,	3	,	4	,	7	,	7	,	7	,	6	,	2	,	10	,	1	,	6	,	7	,	4	,	6	,	1	,	5	,	2	,	3	],
+[	6	,	6	,	inf	,	inf	,	7	,	5	,	7	,	1	,	5	,	9	,	4	,	8	,	7	,	9	,	8	,	10	,	9	,	1	,	6	,	5	],
+[	2	,	5	,	9	,	2	,	inf	,	10	,	10	,	6	,	3	,	9	,	7	,	2	,	8	,	3	,	5	,	8	,	6	,	5	,	4	,	9	],
+[	7	,	6	,	8	,	1	,	inf	,	inf	,	10	,	7	,	3	,	8	,	6	,	8	,	8	,	3	,	8	,	6	,	9	,	4	,	8	,	2	],
+[	3	,	4	,	1	,	4	,	7	,	7	,	inf	,	5	,	1	,	1	,	7	,	10	,	1	,	4	,	9	,	7	,	3	,	2	,	1	,	1	],
+[	10	,	3	,	8	,	2	,	6	,	1	,	inf	,	inf	,	7	,	1	,	1	,	5	,	4	,	2	,	9	,	4	,	4	,	5	,	10	,	2	],
+[	9	,	4	,	1	,	5	,	3	,	2	,	7	,	10	,	inf	,	8	,	9	,	4	,	1	,	7	,	4	,	10	,	6	,	8	,	6	,	7	],
+[	4	,	1	,	8	,	8	,	1	,	4	,	6	,	10	,	inf	,	inf	,	10	,	10	,	7	,	10	,	6	,	4	,	1	,	7	,	8	,	10	],
+[	2	,	3	,	6	,	1	,	9	,	4	,	7	,	6	,	5	,	9	,	inf	,	6	,	8	,	1	,	5	,	9	,	2	,	3	,	3	,	7	],
+[	3	,	9	,	7	,	2	,	9	,	2	,	8	,	2	,	7	,	5	,	inf	,	inf	,	5	,	7	,	9	,	9	,	9	,	6	,	6	,	5	],
+[	10	,	8	,	1	,	10	,	5	,	7	,	2	,	3	,	7	,	1	,	3	,	6	,	inf	,	10	,	3	,	9	,	7	,	6	,	2	,	8	],
+[	9	,	4	,	4	,	3	,	3	,	8	,	10	,	4	,	3	,	7	,	8	,	3	,	inf	,	inf	,	9	,	7	,	9	,	8	,	2	,	4	],
+[	8	,	7	,	8	,	6	,	3	,	9	,	8	,	6	,	4	,	1	,	5	,	10	,	1	,	10	,	inf	,	5	,	1	,	2	,	8	,	4	],
+[	10	,	7	,	4	,	5	,	1	,	5	,	3	,	6	,	5	,	4	,	10	,	4	,	2	,	4	,	inf	,	inf	,	9	,	3	,	3	,	1	],
+[	4	,	7	,	5	,	6	,	9	,	10	,	10	,	9	,	8	,	3	,	6	,	9	,	1	,	8	,	7	,	6	,	inf	,	10	,	4	,	8	],
+[	6	,	2	,	7	,	1	,	8	,	10	,	2	,	6	,	8	,	6	,	9	,	5	,	7	,	10	,	4	,	8	,	inf	,	inf	,	7	,	8	],
+[	5	,	7	,	7	,	7	,	8	,	6	,	6	,	8	,	2	,	2	,	8	,	3	,	10	,	5	,	8	,	8	,	8	,	3	,	inf	,	6	],
+[	6	,	8	,	8	,	10	,	5	,	7	,	4	,	7	,	3	,	9	,	9	,	7	,	7	,	1	,	9	,	7	,	4	,	8	,	inf	,	inf	]]
+        ) #bardziej wlasciwa nazwa to time matrix
     
     penalties_matrix= np.array(
                    [[0, 10, 10],
@@ -110,9 +141,14 @@ class Solver1:
             prev_point=point
         return cost
     
-    def get_neighbor_solution(self, x_star):
-        
-        pass
+    def get_neighbor_solution(self, route):
+        while(self.check_solution(route)):
+            place1=random.randint(0,len(route))
+            place2=random.randint(0,len(route))
+            temp=route[place1]
+            route[place1]=route[place2]
+            route[place1]=temp
+        return route
         
     
     def simulated_annealing(self):
@@ -133,7 +169,7 @@ class Solver1:
             for it in range(self.k):
                 x_n=x_star
                 while not self.check_solution(x_n):
-                    #x_n=zmiana w rozwiazaniu
+                    x_n=self.get_neighbor_solution(x_n)
                     limiter=0
                     if limiter==self.max_prohibited_solutions:
                         print("program nie moze osiagnac dopuszczalnego rozwiazana")
@@ -154,5 +190,13 @@ class Solver1:
         
             
 #Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
-solver = Solver1()
-print(solver.simulated_annealing())
+        
+solver = Solver()
+best_solution=solver.simulated_annealing()
+for i in range(10):
+    curr_solution=solver.simulated_annealing()
+    print("iteration number ",i, "route ",curr_solution[0],'tip= ',curr_solution[1])
+    if best_solution[1]<curr_solution[1]:
+        best_solution=curr_solution
+print("Best solution, route: ",best_solution[0],'tip= ',best_solution[1])
+    
