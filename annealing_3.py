@@ -59,6 +59,7 @@ class Solver1:
         x_init=[c_order[start_point]]
         backpack=[d_order[start_point]]
         c_order.remove(c_order[start_point])
+        d_order.remove(d_order[start_point])
         while len(x_init) != len(self.restaurants + self.customers): # dopóki są zamówienia do odebrania lub do dostarczenia wykonuj
             if len(backpack) < self.backpack_volume: #jeśli ilosc w plecaku < pojemnosci plecaka wykonaj:
                 if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje , // szansa 50% że: wykonaj:
@@ -69,6 +70,7 @@ class Solver1:
                         x_init.append(c_order[next_point])
                         backpack.append(d_order[next_point])
                         c_order.remove(c_order[next_point])
+                        d_order.remove(d_order[next_point])
                 elif backpack: #tutaj dodamy do sciezki klienta
                     next_point=0
                     if len(backpack)>1:
@@ -105,8 +107,13 @@ class Solver1:
                 for case in self.penalties_matrix:
                     if case[0] < time <= case[1]:
                         cost+= case[2] * (1)
+            prev_point=point
         return cost
     
+    def get_neighbor_solution(self, x_star):
+        
+        pass
+        
     
     def simulated_annealing(self):
         T = self.T0
