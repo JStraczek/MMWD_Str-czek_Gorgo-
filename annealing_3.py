@@ -105,9 +105,21 @@ class Solver1:
             if point[0]%2 !=0:
                 for case in self.penalties_matrix:
                     if case[0] < time <= case[1]:
+<<<<<<< HEAD
                         cost+= case[2] * (1)    
         return cost
     
+=======
+                        cost+= case[2] * (1)
+            prev_point=point
+        return cost
+    
+    def get_neighbor_solution(self, x_star):
+        
+        pass
+        
+    
+>>>>>>> 96ebeaefdbd7bd6748565638c3c4898f12ca1147
     def simulated_annealing(self):
         T = self.T0
         
