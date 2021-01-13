@@ -37,22 +37,21 @@ class Order():
     j=(19,'j')
       
 class Solver:
-    
+
     T0 = 10000 # initial temperature
     Tmin = 1 # minimal temperature
     k = 100 # number of iteration per era
     alpha = 0.8 # cooling coefficient
-    
     max_prohibited_solutions=300
     
     backpack_volume=3 # backpack volume
-    
     restaurants = [Order.A, 	Order.B, 	Order.C, 	Order.D, Order.E] #points of collect
     customers = [Order.a, 	Order.b, 	Order.c, 	Order.d, Order.E] #points of deliver
     
     Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 
     cost_matrix = np.array(
+
 [[	inf	,	3	,	8	,	3	,	9	,	4	,	1	,	10	,	10	,	2	,	4	,	4	,	6	,	8	,	2	,	2	,	6	,	6	,	7	,	3	],
 [	inf	,	inf	,	10	,	9	,	9	,	1	,	1	,	8	,	1	,	4	,	3	,	4	,	1	,	5	,	2	,	3	,	5	,	8	,	9	,	1	],
 [	10	,	10	,	inf	,	3	,	4	,	7	,	7	,	7	,	6	,	2	,	10	,	1	,	6	,	7	,	4	,	6	,	1	,	5	,	2	,	3	],
@@ -95,7 +94,7 @@ class Solver:
             if len(backpack) < self.backpack_volume: #jeśli ilosc w plecaku < pojemnosci plecaka wykonaj:
                 if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje , // szansa 50% że: wykonaj:
                     if c_order:
-                        next_point=0
+                        next_point = 0
                         if len(c_order)>1:
                             next_point=random.randint(0, len(c_order)-1)
                         x_init.append(c_order[next_point])
@@ -141,6 +140,7 @@ class Solver:
             prev_point=point
         return cost
     
+
     def get_neighbor_solution(self, route):
         while(self.check_solution(route)):
             place1=random.randint(0,len(route))
@@ -149,8 +149,6 @@ class Solver:
             route[place1]=route[place2]
             route[place1]=temp
         return route
-        
-    
     def simulated_annealing(self):
         T = self.T0
         
@@ -189,7 +187,7 @@ class Solver:
         return (x_star, self.cost_function(x_star))
         
             
-#Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
+
         
 solver = Solver()
 best_solution=solver.simulated_annealing()

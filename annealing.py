@@ -86,7 +86,6 @@ class Solver:
     def calculate_penalty(self, time):
         for case in self.penalties_matrix:
             if case[0] < time <= case[1]:
-
                 return case[2] * (-1)
 
     # def get_order_list(self):
