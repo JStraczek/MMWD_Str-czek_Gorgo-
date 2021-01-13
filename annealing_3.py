@@ -33,8 +33,8 @@ class Solver1:
     
     backpack_volume=3 # backpack volume
     
-    c_orders = [Order.A, Order.B] #points of collect
-    d_orders = [Order.a, Order.b] #points of deliver
+    restaurants = [Order.A, Order.B] #points of collect
+    customers = [Order.a, Order.b] #points of deliver
     
     Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 
@@ -53,24 +53,23 @@ class Solver1:
                     [50, inf, -inf]], dtype=object) #bardziej wlasciwa nazwa to cost matrix
     
     def create_init_solution(self):
-        c_order=self.c_orders
-        d_order=self.d_orders
+        c_order=self.restaurants[:]
+        d_order=self.customers[:]
         start_point=random.randint(0, len(c_order)-1)
         x_init=[c_order[start_point]]
         backpack=[d_order[start_point]]
         c_order.remove(c_order[start_point])
-        while len(c_order)!=0 or len(d_order)!=0:
-            if len(backpack)<self.backpack_volume:
-                if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje
-                    if len(c_order)!=0:
+        while len(x_init) != len(self.restaurants + self.customers): # dopóki są zamówienia do odebrania lub do dostarczenia wykonuj
+            if len(backpack) < self.backpack_volume: #jeśli ilosc w plecaku < pojemnosci plecaka wykonaj:
+                if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje , // szansa 50% że: wykonaj:
+                    if c_order:
                         next_point=0
                         if len(c_order)>1:
                             next_point=random.randint(0, len(c_order)-1)
-                        print('next',next_point)
                         x_init.append(c_order[next_point])
                         backpack.append(d_order[next_point])
                         c_order.remove(c_order[next_point])
-                elif len(backpack)>0: #tutaj dodamy do sciezki klienta
+                elif backpack: #tutaj dodamy do sciezki klienta
                     next_point=0
                     if len(backpack)>1:
                         next_point=random.randint(0, len(backpack)-1)
@@ -80,7 +79,6 @@ class Solver1:
                 next_point=random.randint(0, len(backpack)-1)
                 x_init.append(backpack[next_point])
                 backpack.remove(backpack[next_point])
-        print(x_init)
         return x_init
     
     def check_solution(self, trace):
@@ -103,35 +101,23 @@ class Solver1:
         prev_point=route[0]
         for point in route[1:]:
             time+=self.cost_matrix[prev_point[0],point[0]]
-            if point[0]%2==0:
-                print("odebrano zamowienie",point)
-            else:
-                print("dostarczono zamowienie",point)
+            if point[0]%2 !=0:
                 for case in self.penalties_matrix:
                     if case[0] < time <= case[1]:
                         cost+= case[2] * (1)
-        print(cost)
         return cost
     
-    def calculate_order_cost(self, order, Xa): # returns order realisation cost based on solution Xa
-        cost = 0
-        for i in range(1, len(Xa)):
-            cost += self.calculate_traverse_cost(Xa[i-1], Xa[i])
-            print('cost',cost)
-            if Xa[i][1] == order[1].lower():
-                break
-        return cost    
     
     def simulated_annealing(self):
         T = self.T0
         
         #x_init=self.Xa #TODO switch lines
-        x_init=self.create_init_solution()#self.c_orders,self.d_orders)
+        x_init=self.create_init_solution()#self.restaurants,self.customers)
         limiter=0
         while not self.check_solution(x_init): #uncomment after finisishing create ini solution
-            x_init=self.create_init_solution(self.c_orders,self.d_orders)
+            x_init=self.create_init_solution()
             if limiter==self.max_prohibited_solutions:
-                print("program nie moze osiagnac dopuszczolnego rozwiazana")
+                print("program nie moze osiagnac dopuszczalnego rozwiazana")
             else:
                 limiter+=1
         
@@ -143,7 +129,8 @@ class Solver1:
                     #x_n=zmiana w rozwiazaniu
                     limiter=0
                     if limiter==self.max_prohibited_solutions:
-                        print("program nie moze osiagnac dopuszczolnego rozwiazana")
+                        print("program nie moze osiagnac dopuszczalnego rozwiazana")
+                        return None
                     else:
                         limiter+=1
                         
@@ -156,8 +143,9 @@ class Solver1:
                     if r < math.exp(-delta/T):
                         x_star = x_n
             T *= self.alpha
+        return (x_star, self.cost_function(x_star))
         
             
 #Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 solver = Solver1()
-solver.simulated_annealing()
+print(solver.simulated_annealing())
