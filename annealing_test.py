@@ -1,20 +1,17 @@
-import matplotlib.pyplot as plt
-from annealing_3 import Solver1
+from annealing import Solver
 
 
-def plot_costtemp (temperature, cost_function):
-    plt.title('Wartość funkcji kosztu w zależności od temperatury')
-    plt.xlabel('Temperatura')
-    plt.ylabel('Wartość funkcji kosztu')
-    plt.xlim(temperature[0], temperature[-1])
-    plt.plot(temperature, cost_function)
-    plt.show()
+# # Plotted tests
+solver = Solver()
+solver.plot_costepoch()
 
 
-
-solver = Solver1()
-solver.simulated_annealing()
-
-print(solver.temp_results)
-
-plot_costtemp(solver.temp_results, solver.cost_function_results)
+# Loop test
+best_solution=solver.simulated_annealing()
+print("iteration number ",0, "route ",best_solution[0],'tip= ',best_solution[1])
+for i in range(10):
+    curr_solution=solver.simulated_annealing()
+    print("iteration number ",i+1, "route ",curr_solution[0],'tip= ',curr_solution[1])
+    if best_solution[1]<curr_solution[1]:
+        best_solution=curr_solution
+print("Best solution, route: ",best_solution[0],'tip= ',best_solution[1])
