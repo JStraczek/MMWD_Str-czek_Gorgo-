@@ -76,8 +76,8 @@ class Solver:
     restaurants = [Order.A, Order.B, Order.C, Order.D, Order.E, Order.F, Order.G, Order.H, Order.I, Order.J] #points of collect
     customers = [Order.a, Order.b, Order.c, Order.d, Order.e, Order.f, Order.g, Order.h, Order.i, Order.j] #points of deliver
 
-    restaurants = restaurants[0:order_amount]
-    customers = customers[0:order_amount]
+    restaurants = restaurants[0:order_amount-1]
+    customers = customers[0:order_amount-1]
 
     cost_function_out = []
 
