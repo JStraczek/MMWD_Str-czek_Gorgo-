@@ -59,7 +59,7 @@ class Solver:
     k = 10 # number of iteration per era
     alpha = 0.8 # cooling coefficient
 
-    order_amount = 10
+    order_amount = 5
     max_prohibited_solutions=500
     max_time = order_amount * 10
     scaler = max_time / 50
@@ -163,6 +163,16 @@ class Solver:
                 return False
             elif el[1].isupper():
                 tmp.append(el)
+        
+        backpack = 0
+        for el in route:
+            if el[1].isupper():
+                backpack+=1
+            else:
+                backpack-=1
+            if backpack > self.backpack_volume:
+                return False
+
 
         time=0
         prev_point=route[0]
