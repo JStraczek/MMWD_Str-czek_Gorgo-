@@ -74,6 +74,46 @@ class Solver:
                     [40, 50, -25],
                     [50, inf, -1000]], dtype=object) #bardziej wlasciwa nazwa to cost matrix
     
+    def simulated_annealing(self):
+        T = self.T0
+        
+        #x_init=self.Xa #TODO switch lines
+        x_init=self.create_init_solution()#self.restaurants,self.customers)
+        limiter=0
+        while not self.check_solution(x_init): #uncomment after finisishing create ini solution
+            x_init=self.create_init_solution()
+            if limiter==self.max_prohibited_solutions:
+                print("program nie moze osiagnac dopuszczalnego rozwiazana")
+            else:
+                limiter+=1
+        
+        x_star = x_init
+        while T > self.Tmin:
+            for it in range(self.k):
+
+                x_n=self.get_neighbor_solution(x_star)
+                while not self.check_solution(x_n):
+                    x_n=self.get_neighbor_solution(x_n)
+                    limiter=0
+                    if limiter==self.max_prohibited_solutions:
+                        print("program nie moze osiagnac dopuszczalnego rozwiazana")
+                        return None
+                    else:
+                        limiter+=1
+
+                delta = self.cost_function(x_n) - self.cost_function(x_star)
+
+                if delta > 0:
+                    x_star=x_n
+                else:       
+                    r = random.random()
+                    e = math.exp(delta/T)
+                    if r < e:
+                        x_star = x_n
+                self.cost_function_out.append(self.cost_function(x_star))
+            T *= self.alpha
+        return (x_star, self.cost_function(x_star))
+    
     def create_init_solution(self):
         c_order=self.restaurants[:]
         d_order=self.customers[:]
@@ -122,7 +162,6 @@ class Solver:
         cost = 0
         for order in self.restaurants:
             time_cost = self.calculate_order_cost(order, x_star)
-
             cost += self.calculate_penalty(time_cost)
         
         return cost
@@ -142,20 +181,7 @@ class Solver:
             if case[0] < time <= case[1]:
                 return case[2]
 
-    
-    # def cost_function(self, route):
-    #     cost = 0
-    #     time = 0
-    #     prev_point=route[0]
-    #     for point in route[1:]:
-    #         time+=self.cost_matrix[prev_point[0],point[0]]
-    #         if point[0]%2 !=0:
-    #             for case in self.penalties_matrix:
-    #                 if case[0] < time <= case[1]:
-    #                     cost+= case[2] * (1)
-    #         prev_point=point
-    #     return cost
-    
+
     def get_neighbor_solution(self, route):
         new_route = route[:]
         place1=random.randint(0,len(new_route)-1)
@@ -163,46 +189,6 @@ class Solver:
         new_route[place1], new_route[place2] = new_route[place2], new_route[place1]
         return new_route
 
-    
-    def simulated_annealing(self):
-        T = self.T0
-        
-        #x_init=self.Xa #TODO switch lines
-        x_init=self.create_init_solution()#self.restaurants,self.customers)
-        limiter=0
-        while not self.check_solution(x_init): #uncomment after finisishing create ini solution
-            x_init=self.create_init_solution()
-            if limiter==self.max_prohibited_solutions:
-                print("program nie moze osiagnac dopuszczalnego rozwiazana")
-            else:
-                limiter+=1
-        
-        x_star = x_init
-        while T > self.Tmin:
-            for it in range(self.k):
-
-                x_n=self.get_neighbor_solution(x_star)
-                while not self.check_solution(x_n):
-                    x_n=self.get_neighbor_solution(x_n)
-                    limiter=0
-                    if limiter==self.max_prohibited_solutions:
-                        print("program nie moze osiagnac dopuszczalnego rozwiazana")
-                        return None
-                    else:
-                        limiter+=1
-
-                delta = self.cost_function(x_n) - self.cost_function(x_star)
-
-                if delta > 0:
-                    x_star=x_n
-                else:       
-                    r = random.random()
-                    e = math.exp(delta/T)
-                    if r < e:
-                        x_star = x_n
-                self.cost_function_out.append(self.cost_function(x_star))
-            T *= self.alpha
-        return (x_star, self.cost_function(x_star))
 
     def plot_costepoch (self):
         self.simulated_annealing()
