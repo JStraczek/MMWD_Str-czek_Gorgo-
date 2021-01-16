@@ -2,6 +2,7 @@ import random
 import sys
 import numpy as np
 import math
+import copy
 
 inf = sys.maxsize
 
@@ -14,13 +15,12 @@ class Order():
     c = (5, 'c')
 
 class Solver:
-    
-    T0 = 100 # initial temperature
+    T0 = 100    # initial temperature
     Tmin = 1
     k = 10
     alpha = 0.5
     orders = [Order.A, Order.B]
-    Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution
+    Xa = [Order.A, Order.a, Order.B, Order.b]   # initial solution
 
 
     cost_matrix = np.array([[inf, 10, 5, 15],
@@ -37,7 +37,7 @@ class Solver:
 
     def simulated_annealing(self):
         T = self.T0
-        x_star = self.Xa
+        x_star = self.Xa[:]
         cost_star = self.cost_function(x_star)
         while T > self.Tmin:
             for i in range(self.k):
@@ -57,6 +57,7 @@ class Solver:
 
     def get_neighbor_solution(self, x_star):
         pass
+  
 
     def cost_function(self, x_star):
         cost = 0
