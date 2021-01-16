@@ -85,13 +85,12 @@ class Solver:
     def simulated_annealing(self):
         T = self.T0
         
-        #x_init=self.Xa #TODO switch lines
-        x_init=self.create_init_solution()#self.restaurants,self.customers)
+        x_init=self.create_init_solution()
         limiter=0
-        while not self.check_solution(x_init): #uncomment after finisishing create ini solution
+        while not self.check_solution(x_init):
             x_init=self.create_init_solution()
             if limiter==self.max_prohibited_solutions:
-                print("program nie moze osiagnac dopuszczalnego rozwiazana")
+                print("program nie moze osiagnac dopuszczalnego rozwiazana ze wzgledu na niepoprawne dane wejsciowe")
             else:
                 limiter+=1
         
@@ -104,7 +103,7 @@ class Solver:
                     x_n=self.get_neighbor_solution(x_n)
                     limiter=0
                     if limiter==self.max_prohibited_solutions:
-                        print("program nie moze osiagnac dopuszczalnego rozwiazana")
+                        print("program nie moze osiagnac dopuszczalnego rozwiazana ze wzgledu na niepoprawne dane wejsciowe")
                     else:
                         limiter+=1
 
