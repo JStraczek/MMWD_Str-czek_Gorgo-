@@ -47,7 +47,7 @@ class Solver:
     restaurants = [Order.A, 	Order.B, 	Order.C, 	Order.D, Order.E] #points of collect
     customers = [Order.a, 	Order.b, 	Order.c, 	Order.d, Order.E] #points of deliver
     
-    Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
+    #Xa = [Order.A, Order.a, Order.B, Order.b] # initial solution(route)
 
     cost_matrix = np.array(
 
@@ -93,7 +93,7 @@ class Solver:
             if len(backpack) < self.backpack_volume: #jeśli ilosc w plecaku < pojemnosci plecaka wykonaj:
                 if random.randint(0,1)==0: #tutaj dodamy do sciezki restauracje , // szansa 50% że: wykonaj:
                     if c_order:
-                        next_point = 0
+                        next_point=0
                         if len(c_order)>1:
                             next_point=random.randint(0, len(c_order)-1)
                         x_init.append(c_order[next_point])
@@ -188,7 +188,7 @@ class Solver:
         
 solver = Solver()
 best_solution=solver.simulated_annealing()
-for i in range(10):
+for i in range(1000):
     curr_solution=solver.simulated_annealing()
     print("iteration number ",i, "route ",curr_solution[0],'tip= ',curr_solution[1])
     if best_solution[1]<curr_solution[1]:
