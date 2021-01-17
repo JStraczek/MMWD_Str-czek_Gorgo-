@@ -54,10 +54,10 @@ class Solver:
     [	6	,	1	,	3	,	5	,	9	,	2	,	1	,	2	,	7	,	10	,	7	,	5	,	8	,	4	,	4	,	1	,	8	,	8	,	inf	,	inf	]]
             ) 
 
-    T0 = 100 # initial temperature
+    T0 = 500 # initial temperature
     Tmin = 1 # minimal temperature
     k = 5 # number of iteration per era
-    alpha = 0.9 # cooling coefficient
+    alpha = 0.8 # cooling coefficient
 
     order_amount = 7
     max_prohibited_solutions=500
